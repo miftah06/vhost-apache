@@ -31,7 +31,7 @@ deploy_to_telegram() {
 
     # Run ftp-bot with provided token and chat ID
     echo "Running ftp-bot to deploy to Telegram..."
-    ./ftp-bot --token $telegram_token --chat_id $telegram_chat_id
+    bash ftp-bot --token $telegram_token --chat_id $telegram_chat_id
 }
 
 # Main Script

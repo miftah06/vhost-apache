@@ -53,7 +53,7 @@ fi
 # Menu
 echo "1. Create FTP user for a virtual host"
 echo "2. View FTP information"
-echo "3. Run ftp-telegram.sh"
+echo "3. Run ftp bot"
 echo "4. Exit"
 
 read -p "Enter your choice: " choice
@@ -68,7 +68,7 @@ case $choice in
         ;;
     3)
         echo "Running ftp-telegram.sh..."
-        ./ftp-telegram.sh
+        bash ftp-bot
         ;;
     4)
         echo "Exiting."
