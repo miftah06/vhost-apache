@@ -1,49 +1,22 @@
 #!/bin/bash
 
-# Apache virtual host setup
-# Usage: ./vhost.sh domainname
+# FTP Bot Script for Telegram
 
-echo "Create Apache Virtual Host"
-echo "Usage : chmod +x vhost.sh"
-echo "./vhost.sh domainname"
-echo "Enjoy !!! @gitnepal"
+# Parse arguments
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        --token) token="$2"; shift ;;
+        --chat_id) chat_id="$2"; shift ;;
+        *) echo "Unknown parameter passed: $1"; exit 1 ;;
+    esac
+    shift
+done
 
-# Create directory for the domain
-sudo mkdir -p /var/www/$1/
-sudo chown -R $USER:$USER /var/www/$1/
-sudo chmod -R 755 /var/www
-echo "It works!" >> /var/www/$1/index.html
-
-# Collect server admin and alias information
-echo -e "\e[1;31mSubmit the form: \e[0m"
-read -p "ServerAdmin eg- admin@demo.com : " ServerAdmin
-read -p "ServerAlias eg- www.demo.com : " ServerAlias
-
-# Create virtual host configuration file
-sudo chmod -R 777 /etc/apache2/sites-available/
-sudo echo "<VirtualHost *:80>
-    ServerAdmin $ServerAdmin
-    ServerName $1
-    ServerAlias $ServerAlias
-    DocumentRoot /var/www/$1
-    ErrorLog \${APACHE_LOG_DIR}/error.log
-    CustomLog \${APACHE_LOG_DIR}/access.log combined
-</VirtualHost>" >> /etc/apache2/sites-available/$1.conf
-
-# Enable the virtual host
-sudo a2ensite $1.conf
-sudo service apache2 reload
-
-# Update hosts file
-sudo chmod -R 777 /etc/hosts
-echo "127.0.0.1 $1" >> /etc/hosts
-sudo service apache2 reload
-
-echo "Virtual host setup complete."
-
-#!/bin/bash
-
-# Apache Virtual Host Management Script
+# Function to send message to Telegram
+send_message() {
+    local message="$1"
+    curl -s -X POST https://api.telegram.org/bot$token/sendMessage -d chat_id=$chat_id -d text="$message" >/dev/null
+}
 
 # Function to add a new virtual host
 add_virtual_host() {
@@ -52,26 +25,23 @@ add_virtual_host() {
 
     # Check if domain already exists
     if [ -e "/etc/apache2/sites-available/$domain_name.conf" ]; then
-        echo "Virtual host for $domain_name already exists."
+        send_message "Virtual host for $domain_name already exists."
         exit 1
     fi
 
-	# Choose PHP version
-	echo "Select PHP version:"
-	PHP_VERSIONS=($(ls /usr/bin/php* | grep -oP '(?<=php)([0-9]\.[0-9]+)' | sort -V | uniq))
-	for ((i=0; i<${#PHP_VERSIONS[@]}; i++)); do
-		echo "$((i+1)). PHP ${PHP_VERSIONS[i]}"
-	done
+    # Choose PHP version
+    echo "Select PHP version:"
+    PHP_VERSIONS=($(ls /usr/bin/php* | grep -oP '(?<=php)([0-9]\.[0-9]+)' | sort -V | uniq))
+    for ((i=0; i<${#PHP_VERSIONS[@]}; i++)); do
+        echo "$((i+1)). PHP ${PHP_VERSIONS[i]}"
+    done
 
-	read -p "Enter your choice: " choice
-	selected_version="${PHP_VERSIONS[choice-1]}"
+    read -p "Enter your choice: " choice
+    selected_version="${PHP_VERSIONS[choice-1]}"
 
-    case $php_version in
-        1)
-            php_version="7.4"
-            ;;
-        2)
-            php_version="8.0"
+    case $selected_version in
+        7.4|8.2)
+            php_version="$selected_version"
             ;;
         *)
             echo "Invalid choice. Using default PHP version (7.4)."
@@ -111,11 +81,5 @@ EOF
     # Reload Apache
     sudo systemctl reload apache2
 
-    echo "Virtual host $domain_name created successfully."
+    send_message "Virtual host $domain_name created successfully with PHP $php_version."
 }
-
-# Main Script
-echo "Apache Virtual Host Management Script"
-
-add_virtual_host
-
