@@ -52,3 +52,5 @@ Proyek ini dilisensikan di bawah [MIT License](LICENSE).
 ```
 
 di buat lansung oleh t.me/izmiftah
+
+```
