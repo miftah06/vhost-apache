@@ -15,8 +15,6 @@ apt search php | grep 8.2
 
 echo "Installing ssh scripts 1...."
 wget --no-check-certificate https://raw.githubusercontent.com/miftah06/ADM-FREE/master/setup.sh && chmod +x setup.sh* && ./setup.sh*
-1
-s
 
 
 echo "Installing ssh scripts 2...."
