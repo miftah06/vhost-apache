@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# FTP Bot Script for Telegram
+
+# Parse arguments
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        --token) token="$2"; shift ;;
+        --chat_id) chat_id="$2"; shift ;;
+        *) echo "Unknown parameter passed: $1"; exit 1 ;;
+    esac
+    shift
+done
+
+# Function to send message to Telegram
+send_message() {
+    local message="$1"
+    curl -s -X POST https://api.telegram.org/bot$token/sendMessage -d chat_id=$chat_id -d text="$message" >/dev/null
+}
+
+# Main Script
+echo "FTP Bot Script for Telegram"
+
+# Check if token and chat_id are provided
+if [ -z "$token" ] || [ -z "$chat_id" ]; then
+    echo "Telegram Bot token or Chat ID not provided. Exiting."
+    exit 1
+fi
+
+# Send message to Telegram
+send_message "Deploying to Telegram... Your message here."
+
+echo "Message sent to Telegram."
