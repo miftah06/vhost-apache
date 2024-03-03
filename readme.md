@@ -1,5 +1,3 @@
-Tentu, berikut ini README.md yang sudah diperbarui dengan tambahan fitur dan fungsinya:
-
 ```markdown
 # Virtual Host Manager
 
