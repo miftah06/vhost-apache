@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Run install.sh
-./install.sh
+bash install.sh
 
 # Run vhost.sh
-./vhost.sh
+bash vhost.sh
 
 echo "Setup complete."
