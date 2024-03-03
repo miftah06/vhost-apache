@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Install Apache2
-sudo apt install curl -y && apt install wget -y
+sudo apt install curl -y && apt install wget -y && apt install mariadb-server -y
 sudo apt-get update
 sudo apt-get install apache2 -y
 curl -sSL https://packages.sury.org/php/README.txt | sudo bash -x
