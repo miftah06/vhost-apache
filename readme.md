@@ -17,8 +17,9 @@ Virtual Host Manager adalah alat sederhana untuk mengelola virtual host Apache m
 #### kloning
     
    ```bash
-   git clone https://github.com/miftah06/vhost-apache
+   git clone https://github.com/miftah06/vhost-apache.git
    ```
+   
 3. Masuk ke direktori Virtual Host Manager:
    ```bash
    cd vhost-apache
