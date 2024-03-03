@@ -13,6 +13,8 @@ add_virtual_host() {
         exit 1
     fi
 
+    read -p "Enter IP address (e.g., 127.0.0.2): " ip_address
+
     # Choose PHP version
     echo "Select PHP version:"
     PHP_VERSIONS=($(ls /usr/bin/php* | grep -oP '(?<=php)([0-9]\.[0-9]+)' | sort -V | uniq))
@@ -39,7 +41,7 @@ add_virtual_host() {
     sudo chmod -R 755 /var/www
 
     cat <<EOF | sudo tee /etc/apache2/sites-available/$domain_name.conf > /dev/null
-<VirtualHost *:8000>
+<VirtualHost $ip_address:8000>
     ServerAdmin webmaster@$domain_name
     ServerName $domain_name
     DocumentRoot /var/www/$domain_name/public_html
@@ -65,7 +67,7 @@ EOF
     # Reload Apache
     sudo systemctl reload apache2
 
-    echo "Virtual host $domain_name created successfully with PHP $php_version."
+    echo "Virtual host $domain_name created successfully with IP $ip_address and PHP $php_version."
 }
 
 # Main Script
