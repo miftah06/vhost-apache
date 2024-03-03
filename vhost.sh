@@ -1,22 +1,6 @@
 #!/bin/bash
 
-# FTP Bot Script for Telegram
-
-# Parse arguments
-while [[ "$#" -gt 0 ]]; do
-    case $1 in
-        --token) token="$2"; shift ;;
-        --chat_id) chat_id="$2"; shift ;;
-        *) echo "Unknown parameter passed: $1"; exit 1 ;;
-    esac
-    shift
-done
-
-# Function to send message to Telegram
-send_message() {
-    local message="$1"
-    curl -s -X POST https://api.telegram.org/bot$token/sendMessage -d chat_id=$chat_id -d text="$message" >/dev/null
-}
+# Apache Virtual Host Management Script
 
 # Function to add a new virtual host
 add_virtual_host() {
@@ -25,7 +9,7 @@ add_virtual_host() {
 
     # Check if domain already exists
     if [ -e "/etc/apache2/sites-available/$domain_name.conf" ]; then
-        send_message "Virtual host for $domain_name already exists."
+        echo "Virtual host for $domain_name already exists."
         exit 1
     fi
 
@@ -81,5 +65,10 @@ EOF
     # Reload Apache
     sudo systemctl reload apache2
 
-    send_message "Virtual host $domain_name created successfully with PHP $php_version."
+    echo "Virtual host $domain_name created successfully with PHP $php_version."
 }
+
+# Main Script
+echo "Apache Virtual Host Management Script"
+
+add_virtual_host "$1"
