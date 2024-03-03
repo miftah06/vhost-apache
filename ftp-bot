@@ -18,6 +18,25 @@ send_message() {
     curl -s -X POST https://api.telegram.org/bot$token/sendMessage -d chat_id=$chat_id -d text="$message" >/dev/null
 }
 
+# Function to add a new virtual host
+add_virtual_host() {
+    local domain_name="$1"
+    local php_version="$2"
+    
+    # Your logic to add virtual host here
+    
+    send_message "Virtual host $domain_name created successfully with PHP $php_version."
+}
+
+# Function to remove a virtual host
+remove_virtual_host() {
+    local domain_name="$1"
+    
+    # Your logic to remove virtual host here
+    
+    send_message "Virtual host $domain_name removed successfully."
+}
+
 # Main Script
 echo "FTP Bot Script for Telegram"
 
@@ -27,7 +46,28 @@ if [ -z "$token" ] || [ -z "$chat_id" ]; then
     exit 1
 fi
 
-# Send message to Telegram
-send_message "Deploying to Telegram... Your message here."
+# Listen for Telegram messages
+while true; do
+    message=$(curl -s "https://api.telegram.org/bot$token/getUpdates" | jq -r '.result[-1].message.text')
 
-echo "Message sent to Telegram."
+    case "$message" in
+        "/add_vhost "*)
+            domain_name=$(echo "$message" | cut -d ' ' -f 2)
+            php_version=$(echo "$message" | cut -d ' ' -f 3)
+            add_virtual_host "$domain_name" "$php_version"
+            ;;
+        "/remove_vhost "*)
+            domain_name=$(echo "$message" | cut -d ' ' -f 2)
+            remove_virtual_host "$domain_name"
+            ;;
+        "/help")
+            send_message "Available commands:
+            /add_vhost <domain_name> <php_version> - Add a new virtual host.
+            /remove_vhost <domain_name> - Remove an existing virtual host.
+            /help - Show this help message."
+            ;;
+        *)
+            send_message "Unknown command. Type /help for available commands."
+            ;;
+    esac
+done
