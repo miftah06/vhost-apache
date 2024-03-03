@@ -23,6 +23,8 @@ Virtual Host Manager adalah alat sederhana untuk mengelola virtual host Apache m
 4. Jalankan skrip `install.sh` untuk menginstal Webmin dan menyiapkan lingkungan:
    ```bash
    ./install.sh
+   ./ftp-manage.sh
+   ./ftp.sh
    ```
 
 ## Peringatan
