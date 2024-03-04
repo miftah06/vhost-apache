@@ -23,7 +23,7 @@ add_virtual_server() {
     smtp_port=587
 
     # Create virtual server with the specified options
-    virtualmin create-domain --domain $domain_name --pass `openssl rand -base64 12` --ip $ip_address --unix --dir --web --ssl --email --logrotate --spam --virus --mysql --dir $website_dir --logdir $log_dir --smtp --smtp-port $smtp_port --default-website-port 81 --default-ssl-port 4443
+    virtualmin create-domain --domain $domain_name --pass `openssl rand -base64 12` --ip $ip_address --unix --dir --web --ssl --email --logrotate --spam --mysql --dir $website_dir --logdir $log_dir --smtp --smtp-port $smtp_port --default-website-port 81 --default-ssl-port 4443
 
     echo "Virtual server $domain_name created successfully with IP $ip_address, website directory $website_dir, log directory $log_dir, SMTP port $smtp_port, HTTP port 81, and HTTPS port 4443."
 }
