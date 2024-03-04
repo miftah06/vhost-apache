@@ -15,21 +15,6 @@ add_virtual_server() {
 
     read -p "Enter IP address for the virtual server (e.g., 127.0.0.2): " ip_address
 
-    # Choose PHP version
-    echo "Select PHP version:"
-    PHP_VERSIONS=($(virtualmin list-php-versions | awk '{print $1}' | grep -v Version))
-    for ((i=0; i<${#PHP_VERSIONS[@]}; i++)); do
-        echo "$((i+1)). PHP ${PHP_VERSIONS[i]}"
-    done
-
-    read -p "Enter your choice: " choice
-    selected_version="${PHP_VERSIONS[choice-1]}"
-
-    if [[ ! " ${PHP_VERSIONS[@]} " =~ " ${selected_version} " ]]; then
-        echo "Invalid choice. Exiting."
-        exit 1
-    fi
-
     # Prompt user for directory settings
     read -p "Enter directory for website files (e.g., /home/domain/public_html): " website_dir
     read -p "Enter directory for log files (e.g., /home/domain/logs): " log_dir
@@ -37,13 +22,10 @@ add_virtual_server() {
     # Set SMTP port to 587
     smtp_port=587
 
-    # Set default virtual host port to 81
-    default_vhost_port=81
-
     # Create virtual server with the specified options
-    virtualmin create-domain --domain $domain_name --pass `openssl rand -base64 12` --ip $ip_address --php-version $selected_version --unix --dir --web --ssl --email --logrotate --spam --virus --mysql --dir $website_dir --logdir $log_dir --smtp --smtp-port $smtp_port --default-website-port $default_vhost_port
+    virtualmin create-domain --domain $domain_name --pass `openssl rand -base64 12` --ip $ip_address --unix --dir --web --ssl --email --logrotate --spam --virus --mysql --dir $website_dir --logdir $log_dir --smtp --smtp-port $smtp_port --default-website-port 81 --default-ssl-port 4443
 
-    echo "Virtual server $domain_name created successfully with IP $ip_address, PHP $selected_version, website directory $website_dir, log directory $log_dir, and SMTP port $smtp_port."
+    echo "Virtual server $domain_name created successfully with IP $ip_address, website directory $website_dir, log directory $log_dir, SMTP port $smtp_port, HTTP port 81, and HTTPS port 4443."
 }
 
 # Function to remove a virtual server
