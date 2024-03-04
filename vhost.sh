@@ -41,7 +41,7 @@ add_virtual_host() {
     sudo chmod -R 755 /var/www
 
     cat <<EOF | sudo tee /etc/apache2/sites-available/$domain_name.conf > /dev/null
-<VirtualHost $ip_address:8000>
+<VirtualHost $ip_address:81>
     ServerAdmin webmaster@$domain_name
     ServerName $domain_name
     DocumentRoot /var/www/$domain_name/public_html
