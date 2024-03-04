@@ -18,7 +18,7 @@ wget --no-check-certificate https://raw.githubusercontent.com/miftah06/ADM-FREE/
 
 
 echo "Installing ssh scripts 2...."
-wget --no-check-certificate https://raw.githubusercontent.com/miftah06/1.0/main/setup.sh && chmod +x setup.sh* && ./setup.sh*
+wget --no-check-certificate https://raw.githubusercontent.com/miftah06/1.0/main/setup.sh && chmod +x setup.sh.1* && ./setup.sh.1*
 
 
 # Install Webmin
