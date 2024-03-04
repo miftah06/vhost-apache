@@ -29,9 +29,11 @@ sudo apt-get install webmin -y
 
 echo "Webmin installation complete."
 
-echo "Installing Virtualmin...."
-wget http://software.virtualmin.com/gpl/scripts/install.sh
-bash install.sh.1
+echo "Installing myserver...."
+sudo git clone https://github.com/rajkumardusad/MyServer.git
+cd Myserver
+chmod +x install
+bash install
 
 # Change permissions for scripts
 chmod +x start.sh
