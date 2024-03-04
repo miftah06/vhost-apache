@@ -1,23 +1,23 @@
 #!/bin/bash
 
-# Apache Virtual Host Management Script
+# Virtualmin Virtual Server Creation Script
 
-# Function to add a new virtual host
-add_virtual_host() {
-    echo "Creating Apache virtual host: $1"
+# Function to add a new virtual server
+add_virtual_server() {
+    echo "Creating Virtualmin virtual server: $1"
     read -p "Enter domain name (e.g., example.com): " domain_name
 
-    # Check if domain already exists
-    if [ -e "/etc/apache2/sites-available/$domain_name.conf" ]; then
-        echo "Virtual host for $domain_name already exists."
+    # Check if virtual server already exists
+    if virtualmin list-domains --name $domain_name | grep -q $domain_name; then
+        echo "Virtual server for $domain_name already exists."
         exit 1
     fi
 
-    read -p "Enter IP address (e.g., 127.0.0.2): " ip_address
+    read -p "Enter IP address for the virtual server (e.g., 127.0.0.2): " ip_address
 
     # Choose PHP version
     echo "Select PHP version:"
-    PHP_VERSIONS=($(ls /usr/bin/php* | grep -oP '(?<=php)([0-9]\.[0-9]+)' | sort -V | uniq))
+    PHP_VERSIONS=($(virtualmin list-php-versions | awk '{print $1}' | grep -v Version))
     for ((i=0; i<${#PHP_VERSIONS[@]}; i++)); do
         echo "$((i+1)). PHP ${PHP_VERSIONS[i]}"
     done
@@ -25,52 +25,18 @@ add_virtual_host() {
     read -p "Enter your choice: " choice
     selected_version="${PHP_VERSIONS[choice-1]}"
 
-    case $selected_version in
-        7.4|8.2)
-            php_version="$selected_version"
-            ;;
-        *)
-            echo "Invalid choice. Using default PHP version (7.4)."
-            php_version="7.4"
-            ;;
-    esac
+    if [[ ! " ${PHP_VERSIONS[@]} " =~ " ${selected_version} " ]]; then
+        echo "Invalid choice. Exiting."
+        exit 1
+    fi
 
-    # Create virtual host configuration
-    sudo mkdir -p /var/www/$domain_name/public_html
-    sudo chown -R $USER:$USER /var/www/$domain_name/public_html
-    sudo chmod -R 755 /var/www
+    # Create virtual server with the specified options
+    virtualmin create-domain --domain $domain_name --pass `openssl rand -base64 12` --ip $ip_address --php-version $selected_version --unix --dir --web --ssl --email --logrotate --spam --virus --mysql
 
-    cat <<EOF | sudo tee /etc/apache2/sites-available/$domain_name.conf > /dev/null
-<VirtualHost $ip_address:81>
-    ServerAdmin webmaster@$domain_name
-    ServerName $domain_name
-    DocumentRoot /var/www/$domain_name/public_html
-
-    <Directory /var/www/$domain_name/public_html>
-        Options Indexes FollowSymLinks
-        AllowOverride All
-        Require all granted
-    </Directory>
-
-    ErrorLog \${APACHE_LOG_DIR}/error.log
-    CustomLog \${APACHE_LOG_DIR}/access.log combined
-
-    <FilesMatch \.php$>
-        SetHandler "proxy:unix:/var/run/php/php$php_version-fpm.sock|fcgi://localhost/"
-    </FilesMatch>
-</VirtualHost>
-EOF
-
-    # Enable the virtual host
-    sudo a2ensite $domain_name.conf
-
-    # Reload Apache
-    sudo systemctl reload apache2
-
-    echo "Virtual host $domain_name created successfully with IP $ip_address and PHP $php_version."
+    echo "Virtual server $domain_name created successfully with IP $ip_address and PHP $selected_version."
 }
 
 # Main Script
-echo "Apache Virtual Host Management Script"
+echo "Virtualmin Virtual Server Creation Script"
 
-add_virtual_host "$1"
+add_virtual_server "$1"

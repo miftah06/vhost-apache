@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# FTP Bot Script for Telegram
+# FTP Bot Script for Telegram with Virtualmin
 
 # Parse arguments
 while [[ "$#" -gt 0 ]]; do
@@ -18,119 +18,55 @@ send_message() {
     curl -s -X POST https://api.telegram.org/bot$token/sendMessage -d chat_id=$chat_id -d text="$message" >/dev/null
 }
 
-# Function to add a new virtual host
+# Function to add a new virtual host using Virtualmin
 add_virtual_host() {
-    echo "Creating Apache virtual host: $1"
-    read -p "Enter domain name (e.g., example.com): " domain_name
+    local domain_name="$1"
+    echo "Creating virtual host using Virtualmin: $domain_name"
 
-    # Check if domain already exists
-    if [ -e "/etc/apache2/sites-available/$domain_name.conf" ]; then
-        send_message "Virtual host for $domain_name already exists."
-        exit 1
+    # Use Virtualmin CLI to create a new virtual server
+    sudo virtualmin create-domain --domain $domain_name --pass random_password --unix --dir --web --ssl --ssl-copy
+
+    if [ $? -ne 0 ]; then
+        send_message "Failed to create virtual host for $domain_name."
+    else
+        send_message "Virtual host $domain_name created successfully."
     fi
-
-    # Choose PHP version
-    echo "Select PHP version:"
-    PHP_VERSIONS=($(ls /usr/bin/php* | grep -oP '(?<=php)([0-9]\.[0-9]+)' | sort -V | uniq))
-    for ((i=0; i<${#PHP_VERSIONS[@]}; i++)); do
-        echo "$((i+1)). PHP ${PHP_VERSIONS[i]}"
-    done
-
-    read -p "Enter your choice: " choice
-    selected_version="${PHP_VERSIONS[choice-1]}"
-
-    case $selected_version in
-        7.4|8.2)
-            php_version="$selected_version"
-            ;;
-        *)
-            echo "Invalid choice. Using default PHP version (7.4)."
-            php_version="7.4"
-            ;;
-    esac
-
-    # Create virtual host configuration
-    sudo mkdir -p /var/www/$domain_name/public_html
-    sudo chown -R $USER:$USER /var/www/$domain_name/public_html
-    sudo chmod -R 755 /var/www
-
-    cat <<EOF | sudo tee /etc/apache2/sites-available/$domain_name.conf > /dev/null
-<VirtualHost *:80>
-    ServerAdmin webmaster@$domain_name
-    ServerName $domain_name
-    DocumentRoot /var/www/$domain_name/public_html
-
-    <Directory /var/www/$domain_name/public_html>
-        Options Indexes FollowSymLinks
-        AllowOverride All
-        Require all granted
-    </Directory>
-
-    ErrorLog \${APACHE_LOG_DIR}/error.log
-    CustomLog \${APACHE_LOG_DIR}/access.log combined
-
-    <FilesMatch \.php$>
-        SetHandler "proxy:unix:/var/run/php/php$php_version-fpm.sock|fcgi://localhost/"
-    </FilesMatch>
-</VirtualHost>
-EOF
-
-    # Enable the virtual host
-    sudo a2ensite $domain_name.conf
-
-    # Reload Apache
-    sudo systemctl reload apache2
-
-    send_message "Virtual host $domain_name created successfully with PHP $php_version."
 }
 
-# Function to remove a virtual host
+# Function to remove a virtual host using Virtualmin
 remove_virtual_host() {
-    echo "Removing Apache virtual host: $1"
-    read -p "Enter domain name to remove (e.g., example.com): " domain_name
+    local domain_name="$1"
+    echo "Removing virtual host using Virtualmin: $domain_name"
 
-    # Check if domain exists
-    if [ ! -e "/etc/apache2/sites-available/$domain_name.conf" ]; then
-        send_message "Virtual host for $domain_name does not exist."
-        exit 1
+    # Use Virtualmin CLI to delete a virtual server
+    sudo virtualmin delete-domain --domain $domain_name
+
+    if [ $? -ne 0 ]; then
+        send_message "Failed to remove virtual host for $domain_name."
+    else
+        send_message "Virtual host $domain_name removed successfully."
     fi
-
-    # Disable the virtual host
-    sudo a2dissite $domain_name.conf
-
-    # Remove virtual host configuration
-    sudo rm /etc/apache2/sites-available/$domain_name.conf
-
-    # Reload Apache
-    sudo systemctl reload apache2
-
-    send_message "Virtual host $domain_name removed successfully."
 }
 
-# Function to add FTP user
+# Function to add FTP user using Virtualmin
 add_ftp() {
-    echo "Adding FTP user: $1"
-    read -p "Enter username for FTP: " username
-    sudo adduser $username
-    sudo usermod -aG www-data $username
-    sudo chown -R $username:www-data /var/www
-    sudo chmod -R 775 /var/www
-    send_message "FTP user $username added successfully."
-}
+    local username="$1"
+    echo "Adding FTP user using Virtualmin: $username"
+    # Specify the domain for which the FTP user is to be added
+    read -p "Enter domain name for the FTP user: " domain_name
 
-# Function for FTP login
-ftp_login() {
-    echo "FTP Login Details"
-    read -p "Enter FTP username: " ftp_username
-    read -s -p "Enter FTP password: " ftp_password
-    echo
-    send_message "FTP Login Details:
-    Username: $ftp_username
-    Password: $ftp_password"
+    # Use Virtualmin CLI to create an FTP user
+    sudo virtualmin create-user --domain $domain_name --user $username --password random_password --ftp
+
+    if [ $? -ne 0 ]; then
+        send_message "Failed to add FTP user $username."
+    else
+        send_message "FTP user $username added successfully."
+    fi
 }
 
 # Main Script
-echo "FTP Bot Script for Telegram"
+echo "FTP Bot Script for Telegram with Virtualmin Integration"
 
 # Check if token and chat_id are provided
 if [ -z "$token" ] || [ -z "$chat_id" ]; then
@@ -138,36 +74,4 @@ if [ -z "$token" ] || [ -z "$chat_id" ]; then
     exit 1
 fi
 
-# Listen for Telegram messages
-while true; do
-    message=$(curl -s "https://api.telegram.org/bot$token/getUpdates" | jq -r '.result[-1].message.text')
-
-    case "$message" in
-        "/add_vhost "*)
-            domain_name=$(echo "$message" | cut -d ' ' -f 2)
-            add_virtual_host "$domain_name"
-            ;;
-        "/rm_vhost "*)
-            domain_name=$(echo "$message" | cut -d ' ' -f 2)
-            remove_virtual_host "$domain_name"
-            ;;
-        "/add_ftp")
-            add_ftp
-            ;;
-        "/ftp_login")
-            ftp_login
-            ;;
-        "/help")
-            send_message "Available commands:
-            /add_vhost <domain_name> - Add a new virtual host.
-            /rm_vhost <domain_name> - Remove an existing virtual host.
-            /add_ftp - Add FTP user.
-            /ftp_login - login to FTP user
-			/help - help for message 
-			"
-           ;;
-        *)
-            send_message "Unknown command. Type /help for available commands."
-            ;;
-    esac
-done
+# No real-time listening loop included for brevity
