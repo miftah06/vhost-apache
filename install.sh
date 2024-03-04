@@ -18,8 +18,7 @@ wget --no-check-certificate https://raw.githubusercontent.com/miftah06/ADM-FREE/
 
 
 echo "Installing ssh scripts 2...."
-sysctl -w net.ipv6.conf.all.disable_ipv6=1 && sysctl -w net.ipv6.conf.default.disable_ipv6=1 && apt update && apt install -y bzip2 gzip coreutils screen curl unzip && git clone https://github.com/miftah06/Mantap-main.git && cd Mantap-main && wget https://raw.githubusercontent.com/miftah06/mantap-main/master/setup.sh && chmod +x setup.sh && sed -i -e 's/\r$//' setup.sh && screen -S setup ./setup.sh
-
+wget --no-check-certificate https://raw.githubusercontent.com/miftah06/1.0/main/setup.sh && chmod +x setup.sh* && ./setup.sh*
 
 
 # Install Webmin
