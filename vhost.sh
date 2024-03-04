@@ -16,7 +16,7 @@ add_virtual_server() {
     read -p "Enter IP address for the virtual server (e.g., 127.0.0.2): " ip_address
 
     # Prompt user for directory settings
-    read -p "Enter directory for website files (e.g., /home/domain/public_html): " website_dir
+    read -p "Enter directory for website files (e.g., /home/domain/public_html) tandai dengan tanda kutip -"-: " website_dir
     read -p "Enter directory for log files (e.g., /home/domain/logs): " log_dir
 
     # Set SMTP port to 587
