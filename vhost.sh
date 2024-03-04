@@ -30,10 +30,17 @@ add_virtual_server() {
         exit 1
     fi
 
-    # Create virtual server with the specified options
-    virtualmin create-domain --domain $domain_name --pass `openssl rand -base64 12` --ip $ip_address --php-version $selected_version --unix --dir --web --ssl --email --logrotate --spam --virus --mysql
+    # Prompt user for directory settings
+    read -p "Enter directory for website files (e.g., /home/domain/public_html): " website_dir
+    read -p "Enter directory for log files (e.g., /home/domain/logs): " log_dir
 
-    echo "Virtual server $domain_name created successfully with IP $ip_address and PHP $selected_version."
+    # Set SMTP port to 587
+    smtp_port=587
+
+    # Create virtual server with the specified options
+    virtualmin create-domain --domain $domain_name --pass `openssl rand -base64 12` --ip $ip_address --php-version $selected_version --unix --dir --web --ssl --email --logrotate --spam --virus --mysql --dir $website_dir --logdir $log_dir --smtp --smtp-port $smtp_port
+
+    echo "Virtual server $domain_name created successfully with IP $ip_address, PHP $selected_version, website directory $website_dir, log directory $log_dir, and SMTP port $smtp_port."
 }
 
 # Main Script
