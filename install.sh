@@ -36,5 +36,6 @@ bash install.sh.1
 # Change permissions for scripts
 chmod +x start.sh
 chmod +x vhost.sh
+sudo rm -rf /home/vps/index.html
 
 echo "Installation complete."

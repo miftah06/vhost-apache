@@ -33,18 +33,20 @@ add_virtual_host() {
             ;;
     esac
 
+    read -p "Enter directory for website files (e.g., /var/www/domain_name/public_html): " website_dir
+
     # Create virtual host configuration
-    sudo mkdir -p /var/www/$domain_name/public_html
-    sudo chown -R $USER:$USER /var/www/$domain_name/public_html
-    sudo chmod -R 755 /var/www
+    sudo mkdir -p $website_dir
+    sudo chown -R $USER:$USER $website_dir
+    sudo chmod -R 755 $website_dir
 
     cat <<EOF | sudo tee /etc/apache2/sites-available/$domain_name.conf > /dev/null
 <VirtualHost $ip_address:81>
     ServerAdmin webmaster@$domain_name
     ServerName $domain_name
-    DocumentRoot /var/www/$domain_name/public_html
+    DocumentRoot $website_dir
 
-    <Directory /var/www/$domain_name/public_html>
+    <Directory $website_dir>
         Options Indexes FollowSymLinks
         AllowOverride All
         Require all granted
@@ -65,7 +67,7 @@ EOF
     # Reload Apache
     sudo systemctl reload apache2
 
-    echo "Virtual host $domain_name created successfully with IP $ip_address and PHP $php_version."
+    echo "Virtual host $domain_name created successfully with IP $ip_address, PHP $php_version, and directory $website_dir."
 }
 
 # Main Script
