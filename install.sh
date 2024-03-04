@@ -29,6 +29,10 @@ sudo apt-get install webmin -y
 
 echo "Webmin installation complete."
 
+echo "Installing Virtualmin...."
+wget http://software.virtualmin.com/gpl/scripts/install.sh
+bash install.sh.1
+
 # Change permissions for scripts
 chmod +x start.sh
 chmod +x vhost.sh
