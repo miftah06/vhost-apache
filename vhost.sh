@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Virtualmin Virtual Server Creation Script
+# Virtualmin Virtual Server Creation and Deletion Script
 
 # Function to add a new virtual server
 add_virtual_server() {
@@ -43,13 +43,34 @@ add_virtual_server() {
     # Create virtual server with the specified options
     virtualmin create-domain --domain $domain_name --pass `openssl rand -base64 12` --ip $ip_address --php-version $selected_version --unix --dir --web --ssl --email --logrotate --spam --virus --mysql --dir $website_dir --logdir $log_dir --smtp --smtp-port $smtp_port --default-website-port $default_vhost_port
 
-    echo "Virtual server $domain_name created successfully with IP $ip_address, PHP $selected_version, website directory $website_dir, log directory $log_dir, SMTP port $smtp_port, and default virtual host port $default_vhost_port."
+    echo "Virtual server $domain_name created successfully with IP $ip_address, PHP $selected_version, website directory $website_dir, log directory $log_dir, and SMTP port $smtp_port."
+}
 
-    # Display virtual server information
-    virtualmin info-domain --domain $domain_name
+# Function to remove a virtual server
+remove_virtual_server() {
+    echo "Removing Virtualmin virtual server: $1"
+    read -p "Enter domain name to delete: " domain_name
+
+    # Check if virtual server exists
+    if ! virtualmin list-domains --name $domain_name | grep -q $domain_name; then
+        echo "Virtual server for $domain_name does not exist."
+        exit 1
+    fi
+
+    # Remove virtual server
+    virtualmin delete-domain --domain $domain_name
+
+    echo "Virtual server $domain_name deleted successfully."
 }
 
 # Main Script
-echo "Virtualmin Virtual Server Creation Script"
+echo "Virtualmin Virtual Server Creation and Deletion Script"
 
-add_virtual_server "$1"
+# Check if operation specified
+if [ "$1" == "add" ]; then
+    add_virtual_server "$2"
+elif [ "$1" == "remove" ]; then
+    remove_virtual_server "$2"
+else
+    echo "Invalid operation. Usage: ./vhost.sh [add|remove] [domain_name]"
+fi

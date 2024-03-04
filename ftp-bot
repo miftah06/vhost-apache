@@ -74,4 +74,13 @@ if [ -z "$token" ] || [ -z "$chat_id" ]; then
     exit 1
 fi
 
-# No real-time listening loop included for brevity
+# Check if specific operation is requested
+if [ "$1" == "add_virtual_host" ]; then
+    add_virtual_host "$2"
+elif [ "$1" == "remove_virtual_host" ]; then
+    remove_virtual_host "$2"
+elif [ "$1" == "add_ftp" ]; then
+    add_ftp "$2"
+else
+    send_message "Unknown operation requested."
+fi
