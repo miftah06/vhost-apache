@@ -31,7 +31,7 @@ echo "Webmin installation complete."
 
 echo "Installing myserver...."
 sudo git clone https://github.com/rajkumardusad/MyServer.git
-cd Myserver
+cd MyServer
 chmod +x install
 bash install
 
