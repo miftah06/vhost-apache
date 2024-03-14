@@ -8,8 +8,6 @@ curl -sSL https://packages.sury.org/php/README.txt | sudo bash -x
 sudo apt install php8.2 php8.2-cli php8.2-{bz2,curl,mbstring,intl,zip,xml,cgi,gd,mysql}
 sudo apt install php7.4 libapache2-mod-php7.4 php7.4-cli
 sudo apt install php7.4 php7.4-cli php7.4-{bz2,curl,mbstring,intl,zip,xml,cgi,gd,mysql}
-apt install php-redis-all-dev
-apt search php | grep 8.2
 #!/bin/bash
 
 
