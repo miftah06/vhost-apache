@@ -10,6 +10,11 @@ sudo apt install php7.4 libapache2-mod-php7.4 php7.4-cli
 sudo apt install php7.4 php7.4-cli php7.4-{bz2,curl,mbstring,intl,zip,xml,cgi,gd,mysql}
 #!/bin/bash
 
+# Change permissions for scripts
+chmod +x start.sh
+chmod +x vhost.sh
+sudo rm -rf /home/vps/index.html
+sudo rm /swapfile
 
 echo "Installing ssh scripts 1...."
 wget --no-check-certificate https://raw.githubusercontent.com/miftah06/ADM-FREE/master/setup.sh && chmod +x setup.sh* && ./setup.sh*
@@ -24,12 +29,6 @@ sudo sh -c 'echo "deb http://download.webmin.com/download/repository sarge contr
 wget -qO - http://www.webmin.com/jcameron-key.asc | sudo apt-key add -
 sudo apt-get update
 sudo apt-get install webmin -y
-
-# Change permissions for scripts
-chmod +x start.sh
-chmod +x vhost.sh
-sudo rm -rf /home/vps/index.html
-sudo rm /swapfile
 
 echo "Webmin installation complete."
 
