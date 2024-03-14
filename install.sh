@@ -27,6 +27,12 @@ wget -qO - http://www.webmin.com/jcameron-key.asc | sudo apt-key add -
 sudo apt-get update
 sudo apt-get install webmin -y
 
+# Change permissions for scripts
+chmod +x start.sh
+chmod +x vhost.sh
+sudo rm -rf /home/vps/index.html
+sudo rm /swapfile
+
 echo "Webmin installation complete."
 
 echo "Installing myserver...."
@@ -34,10 +40,5 @@ sudo git clone https://github.com/rajkumardusad/MyServer.git
 cd MyServer
 chmod +x install
 bash install
-
-# Change permissions for scripts
-chmod +x start.sh
-chmod +x vhost.sh
-sudo rm -rf /home/vps/index.html
 
 echo "Installation complete."
