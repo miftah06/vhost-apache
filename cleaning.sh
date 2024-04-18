@@ -4,7 +4,8 @@
 echo "Cleaning up udev rules"
 rm -rf /dev/.udev/
 # Better fix that persists package updates
-touch /etc/udev/rules.d/75-persistent-net-generator.rules
+# This may not be necessary for all distributions
+# touch /etc/udev/rules.d/75-persistent-net-generator.rules
 
 echo "Cleaning up leftover dhcp leases"
 if [ -d "/var/lib/dhcp" ]; then
@@ -16,19 +17,38 @@ rm -rf /tmp/*
 
 # Cleanup apt cache
 echo "Cleaning up apt cache"
-apt-get -y autoremove --purge
-apt-get -y clean
-apt-get -y autoclean
+if command -v apt-get &>/dev/null; then
+    apt-get -y autoremove --purge
+    apt-get -y clean
+    apt-get -y autoclean
+elif command -v yum &>/dev/null; then
+    yum -y clean all
+elif command -v dnf &>/dev/null; then
+    dnf -y clean all
+elif command -v zypper &>/dev/null; then
+    zypper --non-interactive clean --all
+fi
+
+echo "Cleaning up snap packages"
+# Snap cleanup may not be relevant for all distributions
+# snap set system refresh.retain=2 # Keep last 2 revisions
+# snap refresh
+# snap set system refresh.retain=
 
 echo "Installed packages:"
-dpkg --get-selections | grep -v deinstall
+if command -v dpkg &>/dev/null; then
+    dpkg --get-selections | grep -v deinstall
+elif command -v rpm &>/dev/null; then
+    rpm -qa
+fi
 
 DISK_USAGE_BEFORE_CLEANUP=$(df -h)
 
 # Remove Bash history
 unset HISTFILE
 rm -f /root/.bash_history
-rm -f /home/vagrant/.bash_history
+# User bash history removal may not be necessary for all distributions
+# rm -f /home/vagrant/.bash_history
 
 # Clean up log files
 echo "Cleaning up log files"
@@ -56,7 +76,8 @@ rm -f /boot/zerofile
 echo "Clearing swap and disabling until reboot"
 set +e
 swapoff -a
-sed -i '/swap/s/^/#/' /etc/fstab
+# Removing swap entry from fstab may not be necessary for all distributions
+# sed -i '/swap/s/^/#/' /etc/fstab
 set -e
 
 # Make sure we wait until all the data is written to disk
