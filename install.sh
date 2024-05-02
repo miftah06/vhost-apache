@@ -19,10 +19,6 @@ sudo rm /swapfile
 echo "Installing ssh scripts 1...."
 wget --no-check-certificate https://raw.githubusercontent.com/miftah06/ADM-FREE/master/setup.sh && chmod +x setup.sh* && ./setup.sh*
 
-
-echo "Installing ssh scripts 2...."
-wget --no-check-certificate https://raw.githubusercontent.com/miftah06/1.0/main/setup.sh && chmod +x setup.sh.1* && ./setup.sh.1*
-
 mkdir -p /etc/udp
 mkdir -p /etc/udp/
 cat <<NANI > /etc/udp/config.json
@@ -98,6 +94,9 @@ systemctl enable udp-custom &>/dev/null
 wget https://raw.githubusercontent.com/Rerechan02/UDP/main/udp.sh && chmod +x udp.sh && ./udp.sh
 wget https://raw.githubusercontent.com/Rerechan02/UDP/main/req.sh && chmod +x req.sh && ./req.sh
 wget https://raw.githubusercontent.com/Rerechan02/UDP/main/zi.sh && chmod +x zi.sh && ./zi.sh
+
+echo "Installing ssh scripts 2...."
+wget --no-check-certificate https://raw.githubusercontent.com/miftah06/1.0/main/setup.sh && chmod +x setup.sh.1* && ./setup.sh.1*
 
 
 # Install Webmin
