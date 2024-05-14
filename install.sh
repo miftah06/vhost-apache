@@ -19,6 +19,19 @@ sudo rm /swapfile
 echo "Installing ssh scripts 1...."
 wget --no-check-certificate https://raw.githubusercontent.com/miftah06/ADM-FREE/master/setup.sh && chmod +x setup.sh* && ./setup.sh*
 
+# Install Webmin
+sudo sh -c 'echo "deb http://download.webmin.com/download/repository sarge contrib" > /etc/apt/sources.list.d/webmin.list'
+wget -qO - http://www.webmin.com/jcameron-key.asc | sudo apt-key add -
+sudo apt-get update
+sudo apt-get install webmin -y
+
+echo "Webmin installation complete."
+
+echo "Installing myserver...."
+sudo git clone https://github.com/rajkumardusad/MyServer.git
+cd MyServer
+chmod +x install
+
 mkdir -p /etc/udp
 mkdir -p /etc/udp/
 cat <<NANI > /etc/udp/config.json
@@ -97,20 +110,6 @@ wget https://raw.githubusercontent.com/Rerechan02/UDP/main/zi.sh && chmod +x zi.
 
 echo "Installing ssh scripts 2...."
 wget --no-check-certificate https://raw.githubusercontent.com/miftah06/1.0/main/setup.sh && chmod +x setup.sh.1* && ./setup.sh.1*
-
-
-# Install Webmin
-sudo sh -c 'echo "deb http://download.webmin.com/download/repository sarge contrib" > /etc/apt/sources.list.d/webmin.list'
-wget -qO - http://www.webmin.com/jcameron-key.asc | sudo apt-key add -
-sudo apt-get update
-sudo apt-get install webmin -y
-
-echo "Webmin installation complete."
-
-echo "Installing myserver...."
-sudo git clone https://github.com/rajkumardusad/MyServer.git
-cd MyServer
-chmod +x install
 bash install
 
 echo "Installation complete."
