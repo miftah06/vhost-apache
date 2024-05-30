@@ -45,11 +45,6 @@ sudo apt-get install webmin -y
 
 echo "Webmin installation complete."
 
-echo "Installing myserver...."
-sudo git clone https://github.com/rajkumardusad/MyServer.git
-cd MyServer
-chmod +x install
-
 mkdir -p /etc/udp
 mkdir -p /etc/udp/
 cat <<NANI > /etc/udp/config.json
@@ -131,3 +126,8 @@ wget --no-check-certificate https://raw.githubusercontent.com/miftah06/1.0/main/
 bash install
 
 echo "Installation complete."
+echo "Installing myserver...."
+sudo git clone https://github.com/rajkumardusad/MyServer.git
+cd MyServer
+chmod +x install
+
