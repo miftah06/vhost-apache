@@ -121,13 +121,10 @@ wget https://raw.githubusercontent.com/Rerechan02/UDP/main/udp.sh && chmod +x ud
 wget https://raw.githubusercontent.com/Rerechan02/UDP/main/req.sh && chmod +x req.sh && ./req.sh
 wget https://raw.githubusercontent.com/Rerechan02/UDP/main/zi.sh && chmod +x zi.sh && ./zi.sh
 
-echo "Installing ssh scripts 2...."
-wget --no-check-certificate https://raw.githubusercontent.com/miftah06/1.0/main/setup.sh && chmod +x setup.sh.1* && ./setup.sh.1*
-bash install
-
 echo "Installation complete."
 echo "Installing myserver...."
 sudo git clone https://github.com/rajkumardusad/MyServer.git
 cd MyServer
 chmod +x install
+bash install
 
